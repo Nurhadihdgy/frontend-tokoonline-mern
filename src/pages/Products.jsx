@@ -45,14 +45,17 @@ export default function Products() {
   ======================= */
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-9 py-10">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-gray-800 rounded-xl animate-pulse">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-9 py-9">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div
+            key={i}
+            className="bg-gray-800 rounded-xl shadow-lg animate-pulse"
+          >
             <div className="h-48 bg-gray-700" />
             <div className="p-5 space-y-3">
-              <div className="h-4 bg-gray-700 w-3/4 rounded" />
-              <div className="h-4 bg-gray-700 w-1/2 rounded" />
-              <div className="h-8 bg-gray-700 w-1/3 rounded" />
+              <div className="h-4 bg-gray-700 rounded w-3/4" />
+              <div className="h-4 bg-gray-700 rounded w-1/2" />
+              <div className="h-8 bg-gray-700 rounded w-1/3" />
             </div>
           </div>
         ))}
@@ -61,15 +64,28 @@ export default function Products() {
   }
 
   /* =======================
-     ERROR
+     2️⃣ API ERROR / DOWN
   ======================= */
   if (error) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center">
-        <h2 className="text-2xl font-bold mb-2">Server Error</h2>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6">
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/4076/4076500.png"
+          alt="Server down"
+          className="w-40 mb-6 opacity-80"
+        />
+
+        <h2 className="text-2xl font-bold mb-2">
+          Server tidak dapat dihubungi
+        </h2>
+
+        <p className="text-gray-400 mb-6">
+          Silakan periksa koneksi atau coba beberapa saat lagi
+        </p>
+
         <button
           onClick={fetchProducts}
-          className="bg-blue-600 px-6 py-2 rounded-lg mt-4"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
         >
           Coba Lagi
         </button>
