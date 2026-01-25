@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Dependency directories
+.vite/
+
+# Environment variables files
+
+.env
+.env.test
+.env.production
+.env.local
+.env.test.local
+.env.production.local
