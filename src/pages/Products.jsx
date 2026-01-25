@@ -45,7 +45,9 @@ export default function Products() {
   ======================= */
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-9 py-9">
+      <div className="min-h-screen w-screen bg-gray-900 text-white">
+        <Navbar />
+      <div className="w-screen grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-9 py-9">
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <div
             key={i}
@@ -60,6 +62,7 @@ export default function Products() {
           </div>
         ))}
       </div>
+      </div>
     );
   }
 
@@ -68,7 +71,11 @@ export default function Products() {
   ======================= */
   if (error) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6">
+      <div className="min-h-screen w-screen bg-gray-900 text-white">
+        <Navbar />
+      
+      <div className="w-screen min-h-[60vh] flex flex-col items-center justify-center text-center px-6">
+        
         <img
           src="https://cdn-icons-png.flaticon.com/512/4076/4076500.png"
           alt="Server down"
@@ -89,6 +96,7 @@ export default function Products() {
         >
           Coba Lagi
         </button>
+      </div>
       </div>
     );
   }
