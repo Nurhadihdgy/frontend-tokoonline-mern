@@ -1,4 +1,6 @@
 import axios from "axios";
+import Swal from "sweetalert2";
+import ReactGA from "react-ga4";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
@@ -27,6 +29,7 @@ api.interceptors.response.use(
         localStorage.removeItem("user");
         window.location.href = "/login";
       });
+      ReactGA.event({ category: "Auth", action: "Auto Logout 401",});
     }
 
     return Promise.reject(error);
