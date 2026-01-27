@@ -62,7 +62,7 @@ const isAdmin = user?.role === "admin";
 
       <div className="grid md:grid-cols-2 gap-10 mt-6">
         <img
-          src={`${API.defaults.baseURL}/products/${id}/image`}
+          src={product.imageUrl}
           onError={(e) => {
               e.target.onerror = null;
               e.target.src =

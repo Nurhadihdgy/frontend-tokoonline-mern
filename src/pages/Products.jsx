@@ -150,7 +150,7 @@ export default function Products() {
                          hover:shadow-2xl hover:-translate-y-1 transition-all"
             >
               <img
-                src={`${api.defaults.baseURL}/products/${p._id}/image`}
+                src={p.imageUrl}
                 alt={p.name}
                 className="h-48 w-full object-cover"
                 onError={(e) => {
