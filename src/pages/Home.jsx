@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 
 export default function Home() {
   return (
     <section className="w-screen h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <Navbar />
       {/* HERO */}
       <div className="max-w-7xl mx-auto px-6 pt-10 pb-0 grid md:grid-cols-2 gap-16 items-center">
         {/* LEFT */}

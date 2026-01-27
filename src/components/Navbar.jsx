@@ -47,7 +47,7 @@ export default function Navbar() {
         {/* HAMBURGER (MOBILE) */}
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden text-white text-2xl"
+          className="md:hidden bg-gray-900 text-white text-2xl"
         >
           <ion-icon name={open ? "close-outline" : "menu-outline"}></ion-icon>
         </button>
@@ -60,7 +60,7 @@ export default function Navbar() {
 
       {/* MENU MOBILE */}
       {open && (
-        <div className="md:hidden bg-gray-800 px-6 pb-4 space-y-4">
+        <div className="md:hidden bg-gray-900 px-6 pb-4 space-y-4">
           <MenuItems
             user={user}
             logout={logout}
