@@ -29,13 +29,6 @@ export default function Home() {
             >
               Lihat Produk
             </Link>
-
-            <Link
-              to="/login"
-              className="border border-gray-500 text-white hover:border-white px-6 py-3 rounded-lg font-semibold transition"
-            >
-              Login
-            </Link>
           </div>
         </div>
 
