@@ -157,13 +157,25 @@ function MenuItems({ user, logout, cartCount = 0, mobile = false, close }) {
       )}
 
       {user.role === "admin" && (
-        <Link
-          to="/products/add"
-          onClick={handleClick}
-          className={baseClass}
-        >
-          Add Product
-        </Link>
+        <>
+          <Link
+            to="/products/add"
+            onClick={handleClick}
+            className={baseClass}
+          >
+            Add Product
+          </Link>
+          <Link
+            to="/admin/orders"
+            onClick={handleClick}
+            className={baseClass}
+          >
+            <span className="flex items-center gap-1">
+              <ion-icon name="receipt-outline"></ion-icon>
+              Riwayat Transaksi
+            </span>
+          </Link>
+        </>
       )}
 
       <div className="flex flex-col md:flex-row md:items-center gap-3">

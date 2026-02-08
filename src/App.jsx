@@ -6,6 +6,7 @@ import AddProduct from "./pages/AddProduct";
 import EditProduct from "./pages/EditProduct";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import AdminOrders from "./pages/AdminOrders";
 import PrivateRoute from "./routes/PrivateRoutes";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -70,6 +71,15 @@ function App() {
           element={
             <PrivateRoute>
               <Checkout />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/orders"
+          element={
+            <PrivateRoute>
+              <AdminOrders />
             </PrivateRoute>
           }
         />

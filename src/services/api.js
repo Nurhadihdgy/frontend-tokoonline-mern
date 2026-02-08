@@ -64,4 +64,10 @@ export const checkPayment = (orderId) =>
 export const getOrderById = (orderId) => api.get(`/orders/${orderId}`);
 export const getOrders = () => api.get("/orders");
 
+export const adminGetAllOrders = () => api.get("/admin/orders");
+export const adminGetOrderById = (orderId) =>
+  api.get(`/admin/orders/${orderId}`);
+export const adminUpdateOrderStatus = (orderId, orderStatus) =>
+  api.put(`/admin/orders/${orderId}/status`, { orderStatus });
+
 export default api;
