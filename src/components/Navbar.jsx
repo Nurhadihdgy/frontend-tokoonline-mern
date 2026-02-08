@@ -1,11 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { getCart } from "../services/api";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -16,6 +18,28 @@ export default function Navbar() {
       });
     }
   }, []);
+
+  const fetchCartCount = () => {
+    if (user && user.role === "user") {
+      getCart()
+        .then((res) => {
+          const items = res.data?.cart?.items || [];
+          const total = items.reduce((sum, item) => sum + item.quantity, 0);
+          setCartCount(total);
+        })
+        .catch(() => {});
+    }
+  };
+
+  useEffect(() => {
+    fetchCartCount();
+  }, [user]);
+
+  useEffect(() => {
+    const handler = () => fetchCartCount();
+    window.addEventListener("cart-updated", handler);
+    return () => window.removeEventListener("cart-updated", handler);
+  }, [user]);
 
   const logout = () => {
     Swal.fire({
@@ -54,7 +78,7 @@ export default function Navbar() {
 
         {/* MENU DESKTOP */}
         <div className="hidden md:flex items-center gap-6 text-sm">
-          <MenuItems user={user} logout={logout} />
+          <MenuItems user={user} logout={logout} cartCount={cartCount} />
         </div>
       </div>
 
@@ -64,6 +88,7 @@ export default function Navbar() {
           <MenuItems
             user={user}
             logout={logout}
+            cartCount={cartCount}
             mobile
             close={() => setOpen(false)}
           />
@@ -76,7 +101,7 @@ export default function Navbar() {
 /* ============================= */
 /* REUSABLE MENU COMPONENT */
 /* ============================= */
-function MenuItems({ user, logout, mobile = false, close }) {
+function MenuItems({ user, logout, cartCount = 0, mobile = false, close }) {
   const baseClass = "block text-gray-300 hover:text-white transition";
 
   const handleClick = () => {
@@ -116,6 +141,20 @@ function MenuItems({ user, logout, mobile = false, close }) {
       <Link to="/products" onClick={handleClick} className={baseClass}>
         Products
       </Link>
+
+      {user.role === "user" && (
+        <Link to="/cart" onClick={handleClick} className={baseClass}>
+          <span className="relative flex items-center gap-1">
+            <ion-icon name="cart-outline"></ion-icon>
+            Keranjang
+            {cartCount > 0 && (
+              <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {cartCount > 99 ? "99+" : cartCount}
+              </span>
+            )}
+          </span>
+        </Link>
+      )}
 
       {user.role === "admin" && (
         <Link

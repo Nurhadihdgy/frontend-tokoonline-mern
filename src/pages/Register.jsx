@@ -18,10 +18,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await registerUser({
-        ...form,
-        role: "user"
-      });
+      await registerUser(form);
       
 
       Swal.fire({

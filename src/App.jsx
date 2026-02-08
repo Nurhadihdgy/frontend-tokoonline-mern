@@ -4,6 +4,8 @@ import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import AddProduct from "./pages/AddProduct";
 import EditProduct from "./pages/EditProduct";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 import PrivateRoute from "./routes/PrivateRoutes";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -50,6 +52,24 @@ function App() {
           element={
             <PrivateRoute>
               <EditProduct />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/cart"
+          element={
+            <PrivateRoute>
+              <Cart />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/checkout"
+          element={
+            <PrivateRoute>
+              <Checkout />
             </PrivateRoute>
           }
         />

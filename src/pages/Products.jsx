@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { getProducts } from "../services/api";
+import { getProducts, addToCart } from "../services/api";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import Swal from "sweetalert2";
 import Navbar from "../components/Navbar";
 
 export default function Products() {
@@ -10,6 +11,28 @@ export default function Products() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const userRole = localStorage.getItem("role");
+
+  const handleAddToCart = (productId, productName) => {
+    addToCart(productId)
+      .then(() => {
+        window.dispatchEvent(new Event("cart-updated"));
+        Swal.fire({
+          icon: "success",
+          title: "Ditambahkan!",
+          text: `${productName} ditambahkan ke keranjang`,
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      })
+      .catch(() => {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          text: "Gagal menambahkan ke keranjang",
+        });
+      });
+  };
 
   const fetchProducts = () => {
     setLoading(true);
@@ -17,8 +40,9 @@ export default function Products() {
 
     getProducts()
       .then((res) => {
-        setProducts(res.data.products);
-        setFiltered(res.data.products);
+        const productsData = res.data?.products || [];
+        setProducts(productsData);
+        setFiltered(productsData);
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
@@ -32,7 +56,7 @@ export default function Products() {
   useEffect(() => {
     const q = search.toLowerCase();
     setFiltered(
-      products.filter(
+      (products || []).filter(
         (p) =>
           p.name.toLowerCase().includes(q) ||
           p.category.toLowerCase().includes(q)
@@ -171,14 +195,27 @@ export default function Products() {
                   Rp {p.price.toLocaleString("id-ID")}
                 </p>
 
-                <Link
-                  to={`/products/${p._id}`}
-                  className="inline-flex items-center gap-2 bg-blue-600 text-white
-                             hover:bg-blue-700 px-4 py-2 rounded-lg transition"
-                >
-                  Detail
-                  <ion-icon name="arrow-forward-outline"></ion-icon>
-                </Link>
+                <div className="flex gap-2">
+                  <Link
+                    to={`/products/${p._id}`}
+                    className="inline-flex items-center gap-2 bg-blue-600 text-white
+                               hover:bg-blue-700 px-4 py-2 rounded-lg transition"
+                  >
+                    Detail
+                    <ion-icon name="arrow-forward-outline"></ion-icon>
+                  </Link>
+
+                  {userRole === "user" && (
+                    <button
+                      onClick={() => handleAddToCart(p._id, p.name)}
+                      className="inline-flex items-center gap-2 bg-green-600 text-white
+                                 hover:bg-green-700 px-4 py-2 rounded-lg transition"
+                    >
+                      <ion-icon name="cart-outline"></ion-icon>
+                      + Keranjang
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
