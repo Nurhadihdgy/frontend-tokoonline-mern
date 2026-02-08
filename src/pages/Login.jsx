@@ -59,6 +59,13 @@ export default function Login() {
             Register
           </a>
         </div>
+
+        <a
+          href="/"
+          className="block text-center text-sm text-gray-400 hover:text-white transition"
+        >
+          ← Kembali ke Home
+        </a>
       </form>
     </div>
   );

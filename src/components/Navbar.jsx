@@ -118,6 +118,10 @@ function MenuItems({ user, logout, cartCount = 0, mobile = false, close }) {
           Home
         </Link>
 
+        <Link to="/products" onClick={handleClick} className={baseClass}>
+          Products
+        </Link>
+
         <Link
           to="/login"
           onClick={handleClick}
