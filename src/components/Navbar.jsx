@@ -147,17 +147,25 @@ function MenuItems({ user, logout, cartCount = 0, mobile = false, close }) {
       </Link>
 
       {user.role === "user" && (
-        <Link to="/cart" onClick={handleClick} className={baseClass}>
-          <span className="relative flex items-center gap-1">
-            <ion-icon name="cart-outline"></ion-icon>
-            Keranjang
-            {cartCount > 0 && (
-              <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                {cartCount > 99 ? "99+" : cartCount}
-              </span>
-            )}
-          </span>
-        </Link>
+        <>
+          <Link to="/cart" onClick={handleClick} className={baseClass}>
+            <span className="relative flex items-center gap-1">
+              <ion-icon name="cart-outline"></ion-icon>
+              Keranjang
+              {cartCount > 0 && (
+                <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
+            </span>
+          </Link>
+          <Link to="/orders" onClick={handleClick} className={baseClass}>
+            <span className="flex items-center gap-1">
+              <ion-icon name="receipt-outline"></ion-icon>
+              Riwayat Belanja
+            </span>
+          </Link>
+        </>
       )}
 
       {user.role === "admin" && (
