@@ -18,7 +18,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    if (error.response && error.response.status === 401 && localStorage.getItem("token")) {
       Swal.fire({
         icon: "warning",
         title: "Sesi berakhir",
