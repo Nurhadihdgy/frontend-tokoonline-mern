@@ -3,6 +3,7 @@ import { getCart, updateCartItem, removeFromCart, clearCart } from "../services/
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import Navbar from "../components/Navbar";
+import ImagePlaceholder from "../components/ImagePlaceholder";
 
 export default function Cart() {
   const [cart, setCart] = useState(null);
@@ -32,9 +33,10 @@ export default function Cart() {
         setCart(res.data?.cart);
         window.dispatchEvent(new Event("cart-updated"));
       })
-      .catch(() =>
-        Swal.fire({ icon: "error", title: "Gagal", text: "Gagal update quantity" })
-      );
+      .catch((err) => {
+        const msg = err.response?.data?.message || "Gagal update quantity";
+        Swal.fire({ icon: "error", title: "Gagal", text: msg });
+      });
   };
 
   const handleRemove = (productId, productName) => {
@@ -89,6 +91,10 @@ export default function Cart() {
 
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
+  const hasStockIssue = cart?.items?.some(
+    (item) => item.quantity > (item.product?.stock || 0)
+  );
 
   /* =======================
      LOADING
@@ -198,15 +204,11 @@ export default function Cart() {
                 className="bg-gray-800 rounded-xl p-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center"
               >
                 {/* IMAGE */}
-                <img
+                <ImagePlaceholder
                   src={item.product?.imageUrl}
                   alt={item.product?.name}
+                  size="cart"
                   className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src =
-                      "https://via.assets.so/img.jpg?w=100&h=100&bg=dcfce7&f=png";
-                  }}
                 />
 
                 {/* INFO */}
@@ -220,6 +222,14 @@ export default function Cart() {
                   <p className="text-green-400 font-bold">
                     Rp {item.product?.price?.toLocaleString("id-ID")}
                   </p>
+                  <p className={`text-xs mt-1 ${item.product?.stock > 0 ? "text-gray-500" : "text-red-400 font-semibold"}`}>
+                    {item.product?.stock > 0 ? `Stok tersedia: ${item.product.stock}` : "Stok Habis"}
+                  </p>
+                  {item.quantity > (item.product?.stock || 0) && (
+                    <p className="text-xs text-red-400 mt-1">
+                      Jumlah melebihi stok!
+                    </p>
+                  )}
                 </div>
 
                 {/* QUANTITY */}
@@ -242,7 +252,9 @@ export default function Cart() {
                     onClick={() =>
                       handleUpdateQty(item.product?._id, item.quantity + 1)
                     }
+                    disabled={item.quantity >= (item.product?.stock || 0)}
                     className="w-8 h-8 rounded-lg bg-gray-700 hover:bg-gray-600
+                               disabled:opacity-40 disabled:cursor-not-allowed
                                flex items-center justify-center text-lg"
                   >
                     +
@@ -289,16 +301,32 @@ export default function Cart() {
                     <ion-icon name="bag-handle-outline"></ion-icon>
                     Lanjut Belanja
                   </Link>
-                  <Link
-                    to="/checkout"
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg
-                               inline-flex items-center gap-2 transition font-semibold"
-                  >
-                    <ion-icon name="card-outline"></ion-icon>
-                    Checkout
-                  </Link>
+                  {hasStockIssue ? (
+                    <button
+                      disabled
+                      className="bg-gray-600 text-gray-400 cursor-not-allowed px-6 py-3 rounded-lg
+                                 inline-flex items-center gap-2 font-semibold"
+                    >
+                      <ion-icon name="card-outline"></ion-icon>
+                      Checkout
+                    </button>
+                  ) : (
+                    <Link
+                      to="/checkout"
+                      className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg
+                                 inline-flex items-center gap-2 transition font-semibold"
+                    >
+                      <ion-icon name="card-outline"></ion-icon>
+                      Checkout
+                    </Link>
+                  )}
                 </div>
               </div>
+              {hasStockIssue && (
+                <p className="text-red-400 text-sm mt-3 text-right">
+                  Beberapa item melebihi stok. Sesuaikan jumlah atau hapus item tersebut.
+                </p>
+              )}
             </div>
           </div>
         )}

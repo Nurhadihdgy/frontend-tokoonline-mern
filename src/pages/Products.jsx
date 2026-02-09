@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import api from "../services/api";
 import Swal from "sweetalert2";
 import Navbar from "../components/Navbar";
+import ImagePlaceholder from "../components/ImagePlaceholder";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -25,11 +26,12 @@ export default function Products() {
           showConfirmButton: false,
         });
       })
-      .catch(() => {
+      .catch((err) => {
+        const msg = err.response?.data?.message || "Gagal menambahkan ke keranjang";
         Swal.fire({
           icon: "error",
           title: "Gagal",
-          text: "Gagal menambahkan ke keranjang",
+          text: msg,
         });
       });
   };
@@ -173,15 +175,11 @@ export default function Products() {
               className="bg-gray-800 rounded-2xl overflow-hidden shadow-lg
                          hover:shadow-2xl hover:-translate-y-1 transition-all"
             >
-              <img
+              <ImagePlaceholder
                 src={p.imageUrl}
                 alt={p.name}
+                size="product"
                 className="h-48 w-full object-cover"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "https://via.assets.so/img.jpg?w=400&h=300&bg=dcfce7&f=png";
-                }}
               />
 
               <div className="p-5">
@@ -191,8 +189,12 @@ export default function Products() {
                   {p.category}
                 </p>
 
-                <p className="text-green-400 font-bold text-lg mb-4">
+                <p className="text-green-400 font-bold text-lg mb-1">
                   Rp {p.price.toLocaleString("id-ID")}
+                </p>
+
+                <p className={`text-sm mb-4 ${p.stock > 0 ? "text-gray-400" : "text-red-400 font-semibold"}`}>
+                  {p.stock > 0 ? `Stok: ${p.stock}` : "Stok Habis"}
                 </p>
 
                 <div className="flex gap-2">
@@ -208,11 +210,14 @@ export default function Products() {
                   {userRole === "user" && (
                     <button
                       onClick={() => handleAddToCart(p._id, p.name)}
-                      className="inline-flex items-center gap-2 bg-green-600 text-white
-                                 hover:bg-green-700 px-4 py-2 rounded-lg transition"
+                      disabled={p.stock <= 0}
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition
+                                 ${p.stock > 0
+                                   ? "bg-green-600 text-white hover:bg-green-700"
+                                   : "bg-gray-600 text-gray-400 cursor-not-allowed"}`}
                     >
                       <ion-icon name="cart-outline"></ion-icon>
-                      + Keranjang
+                      {p.stock > 0 ? "+ Keranjang" : "Habis"}
                     </button>
                   )}
                 </div>

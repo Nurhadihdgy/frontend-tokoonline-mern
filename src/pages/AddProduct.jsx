@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createProduct } from "../services/api";
 import Swal from "sweetalert2";
 import ReactGA from "react-ga4";
+import ImagePlaceholder from "../components/ImagePlaceholder";
 
 export default function AddProduct() {
   const navigate = useNavigate();
@@ -34,7 +35,12 @@ export default function AddProduct() {
     Object.keys(form).forEach((key) =>
       data.append(key, form[key])
     );
-    if (image) data.append("image", image);
+    
+    // If no image is uploaded, don't append the image field
+    // The backend should handle this case by using a default image
+    if (image) {
+      data.append("image", image);
+    }
 
     try {
       await createProduct(data);
@@ -185,12 +191,24 @@ export default function AddProduct() {
         </div>
 
         {/* Preview */}
-        {preview && (
+        {preview ? (
           <img
             src={preview}
             alt="Preview"
             className="w-full h-48 object-cover rounded-xl border border-gray-700"
           />
+        ) : (
+          <div>
+            <label className="text-sm text-gray-300 mb-2 block">
+              Preview Gambar
+            </label>
+            <ImagePlaceholder
+              src={null}
+              alt="No image uploaded"
+              size="large"
+              className="w-full h-48 object-cover rounded-xl border border-gray-700"
+            />
+          </div>
         )}
 
         {/* ACTION */}

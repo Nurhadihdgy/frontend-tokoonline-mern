@@ -3,6 +3,7 @@ import { getCart, checkout, checkPayment } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Navbar from "../components/Navbar";
+import ImagePlaceholder from "../components/ImagePlaceholder";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -30,6 +31,10 @@ export default function Checkout() {
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
+  const hasStockIssue = cart?.items?.some(
+    (item) => item.quantity > (item.product?.stock || 0)
+  );
+
   const handleCheckout = () => {
     if (!paymentMethod) {
       Swal.fire({ icon: "warning", title: "Pilih metode pembayaran" });
@@ -46,8 +51,9 @@ export default function Checkout() {
           setPaid(true);
         }
       })
-      .catch(() => {
-        Swal.fire({ icon: "error", title: "Gagal", text: "Checkout gagal" });
+      .catch((err) => {
+        const msg = err.response?.data?.message || "Checkout gagal";
+        Swal.fire({ icon: "error", title: "Gagal", text: msg });
       })
       .finally(() => setSubmitting(false));
   };
@@ -352,19 +358,20 @@ export default function Checkout() {
                 className="flex justify-between items-center"
               >
                 <div className="flex items-center gap-3">
-                  <img
+                  <ImagePlaceholder
                     src={item.product?.imageUrl}
                     alt={item.product?.name}
+                    size="checkout"
                     className="w-12 h-12 object-cover rounded-lg"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src =
-                        "https://via.assets.so/img.jpg?w=50&h=50&bg=dcfce7&f=png";
-                    }}
                   />
                   <div>
                     <p className="font-medium">{item.product?.name}</p>
                     <p className="text-sm text-gray-400">x{item.quantity}</p>
+                    {item.quantity > (item.product?.stock || 0) && (
+                      <p className="text-xs text-red-400">
+                        Stok tidak cukup (tersedia: {item.product?.stock || 0})
+                      </p>
+                    )}
                   </div>
                 </div>
                 <p className="text-green-400 font-semibold">
@@ -448,10 +455,19 @@ export default function Checkout() {
           </div>
         </div>
 
+        {/* Stock Warning */}
+        {hasStockIssue && (
+          <div className="bg-red-900/40 border border-red-500/30 rounded-xl p-4 mb-4 text-center">
+            <p className="text-red-400 font-semibold">
+              Beberapa item melebihi stok yang tersedia. Kembali ke keranjang untuk menyesuaikan.
+            </p>
+          </div>
+        )}
+
         {/* Tombol Bayar */}
         <button
           onClick={handleCheckout}
-          disabled={!paymentMethod || submitting}
+          disabled={!paymentMethod || submitting || hasStockIssue}
           className="w-full bg-green-600 hover:bg-green-700
                      disabled:bg-gray-700 disabled:cursor-not-allowed
                      text-white py-4 rounded-xl font-bold text-lg

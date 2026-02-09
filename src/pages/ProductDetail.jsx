@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-import API from "../services/api";
+import API, { addToCart } from "../services/api";
 import Navbar from "../components/Navbar";
+import ImagePlaceholder from "../components/ImagePlaceholder";
 import { getUser } from "../services/auth";
 import ReactGA from "react-ga4";
 
 export default function ProductDetail() {
   const user = getUser();
   const isAdmin = user?.role === "admin";
+  const isUser = user?.role === "user";
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -61,13 +63,10 @@ export default function ProductDetail() {
       </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mt-6">
-        <img
+        <ImagePlaceholder
           src={product.imageUrl}
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src =
-              "https://via.assets.so/img.jpg?w=400&h=400&bg=dcfce7&f=png";
-          }}
+          alt={product.name}
+          size="large"
           className="w-full aspect-square object-cover rounded-xl"
         />
 
@@ -85,7 +84,41 @@ export default function ProductDetail() {
           </p>
 
           <p className="text-sm text-gray-400">Kategori: {product.category}</p>
-          <p className="text-sm text-gray-400 mb-6">Stok: {product.stock}</p>
+          <p className={`text-sm mb-6 ${product.stock > 0 ? "text-gray-400" : "text-red-400 font-semibold"}`}>
+            {product.stock > 0 ? `Stok: ${product.stock}` : "Stok Habis"}
+          </p>
+
+          {isUser && (
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4 mb-4">
+              <button
+                onClick={() => {
+                  addToCart(product._id)
+                    .then(() => {
+                      window.dispatchEvent(new Event("cart-updated"));
+                      Swal.fire({
+                        icon: "success",
+                        title: "Ditambahkan!",
+                        text: `${product.name} ditambahkan ke keranjang`,
+                        timer: 1500,
+                        showConfirmButton: false,
+                      });
+                    })
+                    .catch((err) => {
+                      const msg = err.response?.data?.message || "Gagal menambahkan ke keranjang";
+                      Swal.fire({ icon: "error", title: "Gagal", text: msg });
+                    });
+                }}
+                disabled={product.stock <= 0}
+                className={`flex items-center justify-center gap-2 px-5 py-2 rounded-lg font-semibold transition
+                  ${product.stock > 0
+                    ? "bg-green-600 hover:bg-green-700 text-white"
+                    : "bg-gray-600 text-gray-400 cursor-not-allowed"}`}
+              >
+                <ion-icon name="cart-outline" class="text-xl"></ion-icon>
+                {product.stock > 0 ? "Tambah ke Keranjang" : "Stok Habis"}
+              </button>
+            </div>
+          )}
 
           {isAdmin && (
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">

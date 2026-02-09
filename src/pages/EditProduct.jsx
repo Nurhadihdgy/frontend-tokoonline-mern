@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
 import Swal from "sweetalert2";
 import ReactGA from "react-ga4";
+import ImagePlaceholder from "../components/ImagePlaceholder";
 export default function EditProduct() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export default function EditProduct() {
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [currentImage, setCurrentImage] = useState(null);
 
   useEffect(() => {
     API.get(`/products/${id}`).then((res) => {
@@ -28,6 +30,7 @@ export default function EditProduct() {
         category: p.category,
         stock: p.stock
       });
+      setCurrentImage(p.imageUrl);
     });
   }, [id]);
 
@@ -166,13 +169,33 @@ export default function EditProduct() {
           />
         </div>
 
-        {/* PREVIEW */}
+        {/* CURRENT IMAGE PREVIEW */}
+        {currentImage && !preview && (
+          <div>
+            <label className="text-sm text-gray-300 mb-2 block">
+              Gambar Saat Ini
+            </label>
+            <ImagePlaceholder
+              src={currentImage}
+              alt="Current product image"
+              size="large"
+              className="w-full h-48 object-cover rounded-xl border border-gray-700"
+            />
+          </div>
+        )}
+
+        {/* NEW IMAGE PREVIEW */}
         {preview && (
-          <img
-            src={preview}
-            alt="Preview"
-            className="w-full h-44 object-cover rounded-xl border border-gray-700"
-          />
+          <div>
+            <label className="text-sm text-gray-300 mb-2 block">
+              Preview Gambar Baru
+            </label>
+            <img
+              src={preview}
+              alt="Preview"
+              className="w-full h-48 object-cover rounded-xl border border-gray-700"
+            />
+          </div>
         )}
 
         {/* ACTION */}
